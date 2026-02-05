@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro de Professor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      padding: 40px;
+    }
+    .form-container {
+      max-width: 420px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 25px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Cadastro de Professor</h2>
+
+  <form id="professorForm">
+    <input type="hidden" id="schoolId" />
+
+    <label>Nome completo</label>
+    <input type="text" id="nome" required />
+
+    <label>Disciplina</label>
+    <input type="text" id="disciplina" required />
+
+    <label>Séries que pode lecionar (ex: 6,7,8)</label>
+    <input type="text" id="series" required />
+
+    <label>E-mail</label>
+    <input type="email" id="email" required />
+
+    <label>WhatsApp</label>
+    <input type="text" id="whatsapp" required />
+
+    <button type="submit">Enviar</button>
+  </form>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const schoolId = params.get("schoolId");
+  document.getElementById("schoolId").value = schoolId;
+
+  document.getElementById("professorForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const data = {
+      schoolId: schoolId,
+      nome: nome.value,
+      disciplina: disciplina.value,
+      series: series.value,
+      email: email.value,
+      whatsapp: whatsapp.value
+    };
+
+    await fetch("URL_DO_SEU_WEBHOOK_AQUI", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    alert("Cadastro enviado com sucesso!");
+  });
+</script>
+
+</body>
+</html>
