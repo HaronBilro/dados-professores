@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Cadastro de Professor</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,7 +26,7 @@
       display: block;
       font-weight: bold;
     }
-    input, select, button {
+    input, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -37,14 +38,31 @@
       border: none;
       cursor: pointer;
     }
+    .msg {
+      margin-top: 20px;
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+      display: none;
+    }
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
   </style>
 </head>
+
 <body>
 
 <div class="form-container">
   <h2>Cadastro de Professor</h2>
 
   <form id="professorForm">
+    <!-- schoolId vem pela URL -->
     <input type="hidden" id="schoolId" />
 
     <label>Nome completo</label>
@@ -64,32 +82,72 @@
 
     <button type="submit">Enviar</button>
   </form>
+
+  <div id="successMsg" class="msg success">
+    Cadastro enviado com sucesso ✅
+  </div>
+
+  <div id="errorMsg" class="msg error">
+    Erro ao enviar os dados. Tente novamente.
+  </div>
 </div>
 
 <script>
+  // 1️⃣ Captura o schoolId da URL
   const params = new URLSearchParams(window.location.search);
   const schoolId = params.get("schoolId");
   document.getElementById("schoolId").value = schoolId;
 
+  // 2️⃣ Referências das mensagens
+  const successMsg = document.getElementById("successMsg");
+  const errorMsg = document.getElementById("errorMsg");
+
+  // 3️⃣ Evento de envio do formulário
   document.getElementById("professorForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const data = {
+    // Esconde mensagens anteriores
+    successMsg.style.display = "none";
+    errorMsg.style.display = "none";
+
+    const payload = {
       schoolId: schoolId,
-      nome: nome.value,
-      disciplina: disciplina.value,
-      series: series.value,
-      email: email.value,
-      whatsapp: whatsapp.value
+      nome: nome.value.trim(),
+      disciplina: disciplina.value.trim(),
+      series: series.value.trim(),
+      email: email.value.trim(),
+      whatsapp: whatsapp.value.trim()
     };
 
-    await fetch("http://localhost:5678/webhook-test/cadastro-professor", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    try {
+      const response = await fetch("URL_DO_SEU_WEBHOOK_N8N", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
 
-    alert("Cadastro enviado com sucesso!");
+      // 4️⃣ Se o webhook responder erro HTTP
+      if (!response.ok) {
+        throw new Error("Erro HTTP");
+      }
+
+      const result = await response.json();
+
+      // 5️⃣ Se o n8n avisar erro lógico
+      if (result.status !== "success") {
+        throw new Error(result.message || "Erro desconhecido");
+      }
+
+      // 6️⃣ Sucesso
+      successMsg.style.display = "block";
+      document.getElementById("professorForm").reset();
+
+    } catch (error) {
+      console.error(error);
+      errorMsg.style.display = "block";
+    }
   });
 </script>
 
