@@ -83,7 +83,7 @@
       whatsapp: whatsapp.value
     };
 
-    await fetch("URL_DO_SEU_WEBHOOK_AQUI", {
+    await fetch("http://localhost:5678/webhook/cadastro-professor", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
