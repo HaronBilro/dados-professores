@@ -120,7 +120,7 @@
     };
 
     try {
-      const response = await fetch("URL_DO_SEU_WEBHOOK_N8N", {
+      const response = await fetch("http://localhost:5678/webhook-test/cadastro-professor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
